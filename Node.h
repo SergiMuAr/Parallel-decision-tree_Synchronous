@@ -12,7 +12,7 @@ class Node {
 
 private:
 
-    struct innerNode{
+struct innerNode{
         int numOfChildren;
         int val;
         int branchVal;
@@ -46,7 +46,7 @@ public:
 
     Node *const *getChild() const;
 
-    void setChild(Node child, int i);
+    void setChild(Node *child, int i);
 
 
 };
