@@ -40,9 +40,14 @@ Node *const *Node::getChild() const {
     return node.child;
 }
 
-void Node::setChild(Node child, int i) {
-    node.child[i] = &child;
+void Node::setChild(Node *child, int i) {
+    node.child[i] = child;
 }
 Node::Node(const Node::innerNode &node) : node(node) {}
 
-Node::Node() {}
+Node::Node() {
+    node.numOfChildren = 0;
+    node.attribute = -1;
+    node.val = -1;
+    node.branchVal = -1;
+}

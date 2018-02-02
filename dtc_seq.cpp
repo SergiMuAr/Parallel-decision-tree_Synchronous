@@ -331,7 +331,7 @@ void decision(vector<int> attr,vector<int> data,node *root)
 		node* childNode;
 		childNode = new node();
 		childNode->setBranchVal(it->first);
-		root->setChild(*childNode,i);
+		root->setChild(childNode,i);
 
 		decision(attr, it->second, childNode);
 	}
@@ -417,10 +417,12 @@ int main()
 	int i;
 	//node* root;
     node* root = new node();
+	/*
     root->setNumOfChildren(0);
     root->setAttribute(-1);
     root->setVal(-1);
     root->setBranchVal(-1);
+    */
 
     // vector to store row number for data in file
 	vector <int> data;
@@ -440,7 +442,7 @@ int main()
 	}
 
 	// create decision tree
-	root = new node();
+	//root = new node();
 
 	double start = omp_get_wtime();
 	decision(attr,data,root);
