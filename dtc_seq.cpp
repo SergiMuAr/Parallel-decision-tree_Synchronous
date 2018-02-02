@@ -3,18 +3,36 @@
 #include <queue>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <iostream>
 #include <cmath>
-#include <cstdlib>
 #include <set>
 #include <climits>
 #include <omp.h>
 #include "Node.h"
 
 // filename of training data and testing data
+
+/*
+#define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Balloons/balloons-data.int.txt"
+#define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Balloons/balloons-test.int.txt"
+*/
+
+/*
 #define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Car/car-data.int.txt"
 #define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Car/car-test.int.txt"
+ */
+
+
+#define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/hayes-roth.data/hayes-roth.data.txt"
+#define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/hayes-roth.data/hayes-roth.test.txt"
+
+
+
+/*
+#define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Nursery/nursery.data.int.txt"
+#define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Nursery/nursery.test.int.txt"
+ */
+
 
 using namespace std;
 
@@ -119,6 +137,8 @@ double getInfoGainOfData(vector <int> data)
 	for(it=classCount.begin();it!=classCount.end();it++){
 		counts.push_back((double)it->second);
 	}
+
+
 	return entropy(counts);
 }
 
@@ -189,19 +209,22 @@ int select(vector <int> &attr,vector <int> data)
 	// printf("infoGain of data: %f\n",getInfoGainOfData(data));
 	// printf("attribute gains:\n");
 	// //to be deleted
-	for(i=1;i<attr.size()-1;i++){
-		if(attr[i]==0){
-			iGain = infoGain(i,data);
-			// //to be deleted
-			// printf("%d %f\n",i,iGain);
-			// //to be deleted
-			if(iGain>maxIGain){
-				// store maximum information gain value along with attribute 
-				maxIGain = iGain;
-				splitAttr = i;
-			}
-		}
-	}
+
+    #pragma omp parallel for shared(maxIGain, splitAttr) private(i)
+        for(i=1;i<attr.size()-1;i++) {
+            if (attr[i] == 0) {
+                iGain = infoGain(i, data);
+                // //to be deleted
+                // printf("%d %f\n",i,iGain);
+                // //to be deleted
+                if (iGain > maxIGain) {
+                    // store maximum information gain value along with attribute
+                    maxIGain = iGain;
+                    splitAttr = i;
+                }
+            }
+        }
+
 	// //to be deleted
 	// printf("\n");
 	// //to be deleted
@@ -256,7 +279,7 @@ int popularVote2(vector<int> data)
 		}
 		else{
 			dataCount[outputClass]++;
-			if (dataCount[outputClass] > maxVal) ans = outputClass;
+			if (dataCount[outputClass] > maxVal) ans = dataCount[outputClass];
 		}
 	}
 	return ans;
@@ -301,7 +324,7 @@ void decision(vector<int> attr,vector<int> data,node *root)
 	if(selectedAttribute == -1){
 		// running out of attributes
         //root->val = popularVote(data);
-		root->setVal(popularVote(data)) ;
+		root->setVal(popularVote2(data)) ;
 		return;
 	}
 
@@ -445,7 +468,15 @@ int main()
 	//root = new node();
 
 	double start = omp_get_wtime();
-	decision(attr,data,root);
+
+    #pragma omp parallel num_threads(4)
+    {
+        #pragma omp single
+        {
+            #pragma omp task
+    	        decision(attr,data,root);
+        };
+    }
 	double end = omp_get_wtime();
 
 	//print decision tree
