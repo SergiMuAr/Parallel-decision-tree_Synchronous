@@ -9,6 +9,7 @@
 #include <climits>
 #include <omp.h>
 #include "Node.h"
+#include "readDS.h"
 
 // filename of training data and testing data
 
@@ -50,51 +51,7 @@ int numOfAttrib, numOfDataEle;
 
 typedef struct Node node;
 
-// initialising tree node
-
-// function to read data and store in fileContent & testFileContent vectors(2d)
-void readCSV(string str)
-{
-	// input file stream (ifs) for reading data from file
-	if(str.compare("training")==0){
-		ifstream ifs(trainingData);
-		string line;
-
-		// read from ifs into string 'line'
-		while(getline(ifs,line)){
-			stringstream lineStream(line);
-			string cell;
-			vector <int> values;
-			// collecting row data from file delimited by ','
-			while(getline(lineStream,cell,',')){
-				const char *cstr = cell.c_str();
-				values.push_back(atoi(cstr));
-			}
-			fileContent.push_back(values);
-		}
-		ifs.close();
-	}
-	else if(str.compare("testing")==0){
-		ifstream ifs(testingData);
-		string line;
-		
-		// read from ifs into string 'line'
-		while(getline(ifs,line)){
-			stringstream lineStream(line);
-			string cell;
-			vector <int> values;
-			// collecting row data from file delimited by ','
-			while(getline(lineStream,cell,',')){
-				const char *cstr = cell.c_str();
-				values.push_back(atoi(cstr));
-			}
-			testFileContent.push_back(values);
-		}
-		ifs.close();
-	}
-}
-
-// function to calculate entropy 
+// function to calculate entropy
 double entropy(vector <double> counts)
 {
 	double total,entropy;
@@ -394,7 +351,11 @@ void test(node* root)
 	pos=0;
 	neg=0;
 	noResult=0;
-	readCSV("testing");
+	vector<vector<int>> testFileContent;
+
+	readDS read = readDS();
+	read.read(testingData, testFileContent);
+
 	for(i=0;i<testFileContent.size();i++){
 		temp=root;
 		flag=0;
@@ -452,7 +413,8 @@ int main()
 	// vector to check if attribute has already been used or not
 	vector <int> attr;
 
-	readCSV("training");
+    readDS read = readDS();
+	read.read(trainingData, fileContent);
 
 	numOfAttrib = fileContent[0].size();
 	numOfDataEle = fileContent.size();
@@ -477,6 +439,7 @@ int main()
     	        decision(attr,data,root);
         };
     }
+
 	double end = omp_get_wtime();
 
 	//print decision tree
