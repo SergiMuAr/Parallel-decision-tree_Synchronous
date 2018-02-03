@@ -12,7 +12,13 @@ class Node {
 
 private:
 
-struct innerNode{
+// node structure of the decision tree
+// attribute: splitting attribute (= -1 if leaf node)
+// val: class value at leaf node (= -1 if decision node)
+// branchVal: make branch decision based on this value
+
+
+    struct innerNode{
         int numOfChildren;
         int val;
         int branchVal;

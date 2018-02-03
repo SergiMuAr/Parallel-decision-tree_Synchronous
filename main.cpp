@@ -11,43 +11,31 @@
 #include "Node.h"
 #include "readDS.h"
 
-// filename of training data and testing data
-
 /*
 #define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Balloons/balloons-data.int.txt"
 #define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Balloons/balloons-test.int.txt"
 */
 
-/*
+
 #define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Car/car-data.int.txt"
 #define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Car/car-test.int.txt"
- */
-
-
-#define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/hayes-roth.data/hayes-roth.data.txt"
-#define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/hayes-roth.data/hayes-roth.test.txt"
-
 
 
 /*
-#define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Nursery/nursery.data.int.txt"
-#define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Nursery/nursery.test.int.txt"
- */
+#define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/hayes-roth.data/hayes-roth.data.txt"
+#define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/hayes-roth.data/hayes-roth.test.txt"
+*/
 
-
+/*
+#define trainingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Nursery/nursery-data.int.txt"
+#define testingData "/home/dabi/experiments/Parallel-Decision-Tree-Classifier-master/Nursery/nursery-test.int.txt"
+*/
 using namespace std;
 
-// 2d vector to store training data
 vector <vector <int> > fileContent;
-// 2d vector to store testing data
-vector <vector <int> > testFileContent;
 
 int numOfAttrib, numOfDataEle;
 
-// node structure of the decision tree
-// attribute: splitting attribute (= -1 if leaf node)
-// val: class value at leaf node (= -1 if decision node)
-// branchVal: make branch decision based on this value
 
 typedef struct Node node;
 
@@ -56,17 +44,16 @@ double entropy(vector <double> counts)
 {
 	double total,entropy;
 	int i;
+
 	total=0;
 	for(i=0;i<counts.size();i++){
-		if(counts[i]==0){
-			return 0;
-		}
 		total+=counts[i];
 	}
+
 	entropy=0;
-	// Entropy E = (a/(a+b+...))*(log(a/(a+b+...))/log(2)) + (b/(a+b+...))*(log(b/(a+b+...))/log(2)) + ...
-	for(i=0;i<counts.size();i++){
-		entropy += (counts[i]/total)*(log(counts[i]/total)/log(2));
+	// Entropy E = (a/(a+b+...))*(log2(a/(a+b+...))) + (b/(a+b+...))*(log2(b/(a+b+...))) + ...
+	for(i=0;i<counts.size();i++) {
+		entropy += (counts[i]/total)*(log2(counts[i]/total));
 	}
 	return -1 * entropy;
 }
@@ -335,7 +322,7 @@ void printDecisionTree(node *root)
 		j=0;
 		while(j<x){
 			bfsQ.push(*(nextNode->getChild()[j]));
-			cout << nextNode->getChild()[j]->getAttribute() << " ";
+            cout << nextNode->getChild()[j]->getAttribute() << " ";
 			j++;
 		}
 		cout << endl;
@@ -401,12 +388,6 @@ int main()
 	int i;
 	//node* root;
     node* root = new node();
-	/*
-    root->setNumOfChildren(0);
-    root->setAttribute(-1);
-    root->setVal(-1);
-    root->setBranchVal(-1);
-    */
 
     // vector to store row number for data in file
 	vector <int> data;
@@ -443,10 +424,10 @@ int main()
 	double end = omp_get_wtime();
 
 	//print decision tree
-	//printDecisionTree(root);
+	printDecisionTree(root);
 
 	// test decision tree
-	test(root);
+	//test(root);
 
 	printf("Time taken:%f\n", end-start);
 
