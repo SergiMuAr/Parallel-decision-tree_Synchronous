@@ -5,8 +5,6 @@
 #include <limits.h>
 using namespace std;
 
-
-
 #ifndef PARALLEL_DECISION_TREE_CLASSIFIER_MASTER_COMPUTATION_H
 #define PARALLEL_DECISION_TREE_CLASSIFIER_MASTER_COMPUTATION_H
 
@@ -17,11 +15,11 @@ public:
 
     double entropy(vector <double> counts);
 
-    double getInfoGainOfData(vector <int>& data, vector<vector<int>>& fileContent,int numOfAttrib);
+    double getInfoGainOfData(vector <int>& dataRows, vector<vector<int>>& dataSet,int numOfAttrib);
 
-    double infoGain(int attr,vector <int>& data, vector<vector<int>>& fileContent, int numOfAttrib);
+    double infoGain(int attr,vector <int>& dataRows, vector<vector<int>>& dataSet, int numOfAttrib);
 
-    int popularVote(vector<int>& data, vector<vector<int>>& fileContent, int numOfAttrib);
+    int maxClass(vector<int> &dataRows, vector<vector<int>> &dataSet, int numOfAttrib);
 
 };
 

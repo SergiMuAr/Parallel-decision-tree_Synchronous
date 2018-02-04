@@ -12,10 +12,10 @@ class Node {
 
 private:
 
-// node structure of the decision tree
+// node structure of the decisionTreeBuilder tree
 // attribute: splitting attribute (= -1 if leaf node)
-// val: class value at leaf node (= -1 if decision node)
-// branchVal: make branch decision based on this value
+// val: class value at leaf node (= -1 if decisionTreeBuilder node)
+// branchVal: make branch decisionTreeBuilder based on this value
 
 
     struct innerNode{
