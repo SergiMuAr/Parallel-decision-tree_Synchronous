@@ -13,8 +13,8 @@ void readDS::read(string filepath, vector<vector<int> > &dataSetEntries)
         vector <int> values;
         // collecting row data from file delimited by ','
         while(getline(lineStream,cell,',')){
-            const char *cstr = cell.c_str();
-            values.push_back(atoi(cstr));
+            const char *c = cell.c_str();
+            values.push_back(atoi(c));
         }
         dataSetEntries.push_back(values);
     }
